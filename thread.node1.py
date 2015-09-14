@@ -3,12 +3,21 @@ import paho.mqtt.client as mqtt
 
 class sub(threading.Thread):
 
-	def __init__(self,client):
+	def __init__(self,client,stopThread):
 		threading.Thread.__init__(self)
 		self.client = client
+		self.stopThread = stopThread
 
 	def run(self):
-		self.client.loop_forever()
+		while not self.stopThread.isSet():
+			#self.client.loop_forever()
+			self.client.loop()
+			self.stopThread.wait(0.001)
+
+	def join(self,timeout = None):
+		print "\n\t\tKilling thread Sub!!"
+		self.stopThread.set()
+		threading.Thread.join(self,timeout)
 
 def sub_on_connect(client,userdata,rc):
 	print "\nSub connected to broker. rc=%d\n\n" %(rc)
@@ -23,24 +32,31 @@ def subfn():
 	client.on_connect=sub_on_connect
 	client.on_message=sub_on_message
 	client.connect("192.168.1.22", 1883,60)
+	
 	sub_thread=sub(client)
+	threadPool.append(sub_thread)
+	
 	sub_thread.start()
-
-
 
 
 class pub(threading.Thread):
 	
-	def __init__(self,client):
+	def __init__(self,client,stopThread):
 		threading.Thread.__init__(self)
 		self.client = client
-
+		self.stopThread = stopThread
 
 	def run(self):
-		while True:
+		while not self.stopThread.isSet():
 			self.client.loop()
 			msg=raw_input()
 			self.client.publish("wa/thread1/publish",msg,1)
+			self.stopThread.wait(0.001)
+
+	def join(self,timeout = None):
+		print "\n\t\tKilling thread Sub!!"
+		self.stopThread.set()
+		threading.Thread.join(self,timeout)
 		
 		
 	
@@ -60,6 +76,8 @@ def pubfn():
 
 
 	pub_thread=pub(client)
+	threadPool.append(pub_thread)
+	
 	pub_thread.start()
 
 
@@ -67,8 +85,17 @@ def main():
 	subfn()
 	pubfn()
 
+threadPool = []
 if __name__ == '__main__':
 	main()
+	try:
+		while True:
+			pass
+	except KeyboardInterrupt as e:
+		print e
+		for each_thread in threadPool:
+			each_thread.join()
+		print "\n\tKilling all Threads !!"
 
 
 
