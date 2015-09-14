@@ -18,6 +18,7 @@ class sub(threading.Thread):
 		print "\n\t\tKilling thread Sub!!"
 		self.stopThread.set()
 		threading.Thread.join(self,timeout)
+		print "\n\tKilled Thread Sub"
 
 def sub_on_connect(client,userdata,rc):
 	print "\nSub connected to broker. rc=%d\n\n" %(rc)
@@ -33,7 +34,7 @@ def subfn():
 	client.on_message=sub_on_message
 	client.connect("192.168.1.22", 1883,60)
 	
-	sub_thread=sub(client)
+	sub_thread=sub(client,stopThread)
 	threadPool.append(sub_thread)
 	
 	sub_thread.start()
@@ -54,9 +55,10 @@ class pub(threading.Thread):
 			self.stopThread.wait(0.001)
 
 	def join(self,timeout = None):
-		print "\n\t\tKilling thread Sub!!"
+		print "\n\t\tKilling thread Pub!!"
 		self.stopThread.set()
 		threading.Thread.join(self,timeout)
+		print "\n\tKilled Pub"
 		
 		
 	
@@ -75,7 +77,7 @@ def pubfn():
 	client.connect("192.168.1.22", 1883,60)
 
 
-	pub_thread=pub(client)
+	pub_thread=pub(client,stopThread)
 	threadPool.append(pub_thread)
 	
 	pub_thread.start()
@@ -86,6 +88,7 @@ def main():
 	pubfn()
 
 threadPool = []
+stopThread = threading.Event()
 if __name__ == '__main__':
 	main()
 	try:
