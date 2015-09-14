@@ -55,7 +55,7 @@ class pub(threading.Thread):
 
 	def join(self,timeout = None):
 		self.stopThread.set()
-		print "Press any Key to kill thread pub"
+		print "\n\twaiting for KEYBOARD INPUT"
 		threading.Thread.join(self,timeout)
 		print "\n\t\tKilled thread thread pub!!"
 		
@@ -97,7 +97,7 @@ if __name__ == '__main__':
 		print e
 		for each_thread in threadPool:
 			each_thread.join()
-		print "\n\tKilled all Threads !!"
+		
 
 
 
