@@ -89,6 +89,7 @@ threadPool = []
 stopThread = threading.Event()
 if __name__ == '__main__':
 	main()
+	
 	try:
 		while True:
 			pass
@@ -96,7 +97,7 @@ if __name__ == '__main__':
 		print e
 		for each_thread in threadPool:
 			each_thread.join()
-		print "\n\tKilling all Threads !!"
+		print "\n\tKilled all Threads !!"
 
 
 
