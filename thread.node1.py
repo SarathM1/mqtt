@@ -10,15 +10,14 @@ class sub(threading.Thread):
 
 	def run(self):
 		while not self.stopThread.isSet():
-			#self.client.loop_forever()
 			self.client.loop()
 			self.stopThread.wait(0.001)
 
 	def join(self,timeout = None):
-		print "\n\t\tKilling thread Sub!!"
 		self.stopThread.set()
 		threading.Thread.join(self,timeout)
-		print "\n\tKilled Thread Sub"
+		print "\n\t\tKilled thread sub!!"
+		
 
 def sub_on_connect(client,userdata,rc):
 	print "\nSub connected to broker. rc=%d\n\n" %(rc)
@@ -55,12 +54,10 @@ class pub(threading.Thread):
 			self.stopThread.wait(0.001)
 
 	def join(self,timeout = None):
-		print "\n\t\tKilling thread Pub!!"
 		self.stopThread.set()
-		print "Press Enter to kill Pub"
+		print "Press any Key to kill thread pub"
 		threading.Thread.join(self,timeout)
-		print "\n\tKilled Pub"
-		
+		print "\n\t\tKilled thread thread pub!!"
 		
 	
 def pub_on_connect(client,userdata,rc):

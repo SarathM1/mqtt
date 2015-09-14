@@ -2,12 +2,21 @@ import threading
 import paho.mqtt.client as mqtt
 
 class sub(threading.Thread):
-	def __init__(self,client):
+	def __init__(self,client,stopThread):
 		threading.Thread.__init__(self)
 		self.client = client
+		self.stopThread = stopThread
 	
 	def run(self):
-		self.client.loop_forever()
+		while not self.stopThread.isSet():
+			self.client.loop()
+			self.stopThread.wait(0.001)
+
+	def join(self,timeout = None):
+		self.stopThread.set()
+		threading.Thread.join(self,timeout)
+		print "\n\t\tKilled thread sub!!"
+		
 
 def sub_on_connect(client,userdata,rc):
 	print "\nSub Connected to broker. rc=%d\n\n" %(rc)
@@ -26,20 +35,25 @@ def subfn():
 	sub_thread.start()
 
 
-
-
-
-
 class pub(threading.Thread):
-	def __init__(self,client):
+	def __init__(self,client,stopThread):
 		threading.Thread.__init__(self)
 		self.client = client
+		self.stopThread = stopThread
 
 	def run(self):
-		while True:
+		while not self.stopThread.isSet():
 			self.client.loop()
 			msg=raw_input()
 			self.client.publish("wa/thread2/publish",msg, 1)
+			self.stopThread.wait(0.001)
+
+	def join(self,timeout = None):
+		self.stopThread.set()
+		print "Press any Key to kill thread pub"
+		threading.Thread.join(self,timeout)
+		print "\n\t\tKilled thread thread pub!!"
+		
 
 def pub_on_connect(client,userdata,rc):
 	print "\nPub Connected to broker. rc=%d\n\n" %(rc)
