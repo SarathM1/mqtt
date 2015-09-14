@@ -31,7 +31,8 @@ def subfn():
 	client.on_message=sub_on_message
 	client.connect("192.168.1.22",1883,60)
 
-	sub_thread=sub(client)
+	sub_thread=sub(client,stopThread)
+	threadPool.append(sub_thread)
 	sub_thread.start()
 
 
@@ -68,7 +69,9 @@ def pubfn():
 	client.on_connect=pub_on_connect
 	client.on_disconnect=pub_on_disconnect
 	client.connect("192.168.1.22",1883,60)
-	pub_thread=pub(client)
+	
+	pub_thread=pub(client,stopThread)
+	threadPool.append(pub_thread)
 	pub_thread.start()
 
 
@@ -78,6 +81,16 @@ def main():
 
 
 
-
+threadPool = []
+stopThread = threading.Event()
 if __name__ == '__main__':
 	main()
+
+	try:
+		while True:
+			pass
+	except KeyboardInterrupt as e:
+		print e
+		for each_thread in threadPool:
+			each_thread.join()
+		print "\n\tKilled all Threads !!"
