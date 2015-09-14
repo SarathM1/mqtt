@@ -22,14 +22,14 @@ def sub_on_connect(client,userdata,rc):
 	print "\nSub connected to broker. rc=%d\n\n" %(rc)
 	client.subscribe("wa/thread2/publish")
 
-def sub_on_message(client,userdata,msg):
+def on_message(client,userdata,msg):
 	print "\t%s" %(msg.payload)
 
 
 def subfn():
 	client=mqtt.Client()
 	client.on_connect=sub_on_connect
-	client.on_message=sub_on_message
+	client.on_message=on_message
 	client.on_disconnect = on_disconnect
 	client.connect("192.168.1.22", 1883,60)
 	
