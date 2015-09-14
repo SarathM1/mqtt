@@ -67,6 +67,7 @@ def on_disconnect(client,userdata,rc):
 	print "Disconnected..rc=%d" %(rc)
 	if not stopThread.isSet():
 		client.reconnect()
+		print "Reconnected to broker. ."
 
 def pubfn():
 	client=mqtt.Client()
