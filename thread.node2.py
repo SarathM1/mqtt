@@ -10,7 +10,7 @@ class sub(threading.Thread):
 		self.client.loop_forever()
 
 def sub_on_connect(client,userdata,rc):
-	print "Sub Connected to broker. rc=%d\n\n" %(rc)
+	print "\nSub Connected to broker. rc=%d\n\n" %(rc)
 	client.subscribe("wa/thread1/publish")
 
 def sub_on_message(client,userdata,msg):
@@ -20,7 +20,7 @@ def subfn():
 	client=mqtt.Client()
 	client.on_connect=sub_on_connect
 	client.on_message=sub_on_message
-	client.connect("test.mosquitto.org",1883,60)
+	client.connect("192.168.1.22",1883,60)
 
 	sub_thread=sub(client)
 	sub_thread.start()
@@ -42,7 +42,7 @@ class pub(threading.Thread):
 			self.client.publish("wa/thread2/publish",msg, 1)
 
 def pub_on_connect(client,userdata,rc):
-	print "Pub Connected to broker. rc=%d\n\n" %(rc)
+	print "\nPub Connected to broker. rc=%d\n\n" %(rc)
 
 
 def pub_on_disconnect(client,userdata,rc):
@@ -53,7 +53,7 @@ def pubfn():
 	client=mqtt.Client()
 	client.on_connect=pub_on_connect
 	client.on_disconnect=pub_on_disconnect
-	client.connect("test.mosquitto.org",1883,60)
+	client.connect("192.168.1.22",1883,60)
 	pub_thread=pub(client)
 	pub_thread.start()
 
