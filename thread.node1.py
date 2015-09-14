@@ -57,6 +57,7 @@ class pub(threading.Thread):
 	def join(self,timeout = None):
 		print "\n\t\tKilling thread Pub!!"
 		self.stopThread.set()
+		print "Press Enter to kill Pub"
 		threading.Thread.join(self,timeout)
 		print "\n\tKilled Pub"
 		
