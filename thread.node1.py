@@ -63,9 +63,6 @@ def pubfn():
 	pub_thread.start()
 
 
-
-
-
 def main():
 	subfn()
 	pubfn()
